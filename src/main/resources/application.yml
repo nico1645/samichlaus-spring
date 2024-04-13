@@ -1,0 +1,83 @@
+spring:
+    config:
+        activate:
+            on-profile: test
+    servlet:
+        multipart:
+            max-file-size: 10MB
+            max-request-size: 10MB
+
+    datasource:
+        url: jdbc:sqlite:/Users/nba/projects/samichlaus-spring/data/sqlite/test.db #Use the path to your SQLite database file
+        driver-class-name: org.sqlite.JDBC
+        username: sa
+        password: sa
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        database-platform: org.hibernate.community.dialect.SQLiteDialect
+samichlaus:
+    backend-server: api.samichlaus.famba.me
+    frontend-server: samichlaus.famba.me
+    path-to-osm-file: /Users/nba/projects/samichlaus-spring/data/osm/hergiswil.osm.pbf
+    path-to-graphhopper-data: /Users/nba/projects/samichlaus-spring/data/graphhopper
+    path-to-excel-template: /Users/nba/projects/samichlaus-spring/api/src/main/resources/templates/Laufliste.xlsm
+logging:
+    level:
+        root: INFO
+        org:
+            springframework: DEBUG
+---
+spring:
+    config:
+        activate:
+            on-profile: prod
+    servlet:
+        multipart:
+            max-file-size: 10MB
+            max-request-size: 10MB
+    datasource:
+        url: ${DATABASE_URL}
+        username: ${DATABASE_USERNAME}
+        password: ${DATABASE_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: false
+        database: postgresql
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+samichlaus:
+    backend-server: api.samichlaus.famba.me
+    frontend-server: samichlaus.famba.me
+    path-to-osm-file: ${PATH_TO_OSM_FILE}
+    path-to-graphhopper-data: ${PATH_TO_GRAPHHOPPER_DATA}
+---
+spring:
+    config:
+        activate:
+            on-profile: develop
+    datasource:
+        url: jdbc:h2:mem:testdb # Using H2 in-memory database
+        driverClassName: org.h2.Driver
+        username: test
+        password: test
+        jpa:
+            hibernate:
+                ddl-auto: create-drop # Re-create database schema on each test run
+            show-sql: true
+            database: h2
+            database-platform: org.hibernate.dialect.H2Dialect
+samichlaus:
+    backend-server: api.samichlaus.famba.me
+    frontend-server: samichlaus.famba.me
+    path-to-osm-file: /Users/nba/projects/samichlaus-spring/data/osm/hergiswil.osm.pbf
+    path-to-graphhopper-data: /Users/nba/projects/samichlaus-spring/data/graphhopper
+    path-to-excel-template: /Users/nba/projects/samichlaus-spring/api/src/main/resources/templates/Laufliste.xlsm
+logging:
+    level:
+        root: INFO
+        org:
+            springframework: DEBUG
+        
