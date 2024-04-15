@@ -77,10 +77,13 @@ public class Route {
     @Column(name = "customer_start")
     private LocalTime customerStart;
 
+    @Column(name = "customer_end")
+    private LocalTime customerEnd = LocalTime.of(0, 0);
+
     @JsonManagedReference
     @Builder.Default()
     @Column(name = "customers_ids")
-    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "route")
     List<Customer> customers = new ArrayList<>();
 
     @JsonBackReference

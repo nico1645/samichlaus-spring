@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,9 +17,7 @@ public interface RouteRepository extends JpaRepository<Route, Integer> {
     @EntityGraph(attributePaths = {"customers"})
     Optional<Route> findById(@NotNull Integer id);
 
-    @Query(value = "SELECT * FROM routes WHERE routes.route_id IN :routeIds", nativeQuery = true)
-    List<Route> findByRouteIdIn(List<UUID> routeIds);
-    @Query(value = "SELECT * FROM routes WHERE routes.id IN :routeIds", nativeQuery = true)
-    List<Route> findByIdIn(List<Integer> routeIds);
+    @Query(value = "Select * FROM route where route.route_id = :route_id", nativeQuery = true)
+    Optional<Route> findByUUID(@Param("route_id") UUID route_id);
 
 }

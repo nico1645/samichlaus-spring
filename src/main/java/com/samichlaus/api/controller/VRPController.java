@@ -139,71 +139,64 @@ public class VRPController {
         Collection<VehicleRoute> routes = bestSolution.getRoutes();
         List<String> groups = Arrays.asList("A", "B", "C", "D", "E", "F", "G");
         int routeNumber = 0;
-        int visitTimeInMinutes = 0;
-
-        Tour savedTour = tourRepository.save(tour);
 
         for (VehicleRoute vehicleRoute : routes) {
             Route route = Route.builder()
-                    .tour(savedTour)
+                    .tour(tour)
                     .customerStart(startTime)
                     .group(Group.fromValue(groups.get(routeNumber)))
                     .user(user)
                     .lastModified(new Date())
                     .build();
-            Route savedRoute = routeRepository.save(route);
+            int visitTimeInMinutes = 0;
             for (TourActivity activity : vehicleRoute.getActivities()) {
                 String jobId;
                 VRPVisit vrpVisit;
-                LocalTime time;
                 if (activity instanceof TourActivity.JobActivity) {
                     jobId = ((TourActivity.JobActivity) activity).getJob().getId();
                     vrpVisit = visits.get(Integer.parseInt(jobId));
                     for (Customer customer: vrpVisit.getCustomers()) {
-                        time = startTime.plusMinutes(visitTimeInMinutes);
+                        LocalTime time = startTime.plusMinutes(visitTimeInMinutes);
                         customer.setVisitTime(time.plusMinutes(Math.round(activity.getArrTime() / 1000 / 60 / 5) * 5));
                         customer.setLastModified(new Date());
-                        customer.setRoute(savedRoute);
-                        visitTimeInMinutes = Constants.getChildrenSeniorCapacity(customer.getChildren(), customer.getSeniors());
-                        customer = customerRepository.save(customer);
-                        savedRoute.getCustomers().add(customer);
+                        customer.setRoute(route);
+                        visitTimeInMinutes += Constants.getChildrenSeniorCapacity(customer.getChildren(), customer.getSeniors());
+                        route.getCustomers().add(customer);
                     }
                 }
             }
+            LocalTime time = startTime.plusMinutes(visitTimeInMinutes);
+            route.setCustomerEnd(time.plusMinutes(Math.round(vehicleRoute.getEnd().getArrTime() / 1000 / 60 / 5) * 5));
 
-            savedTour.getRoutes().add(savedRoute);
+            tour.getRoutes().add(route);
 
             routeNumber++;
             startTime = startTime.plusMinutes(10);
         }
 
-        savedTour = tourRepository.save(savedTour);
-
         Route route = Route.builder()
-                .tour(savedTour)
-                .customerStart(LocalTime.of(0, 0))
+                .tour(tour)
                 .group(Group.Z)
+                .customerStart(LocalTime.of(0, 0))
                 .user(user)
                 .lastModified(new Date())
                 .build();
-        Route savedRoute = routeRepository.save(route);
         for (Job job: bestSolution.getUnassignedJobs()) {
             VRPVisit vrpVisit = visits.get(Integer.parseInt(job.getId()));
             for (Customer customer: vrpVisit.getCustomers()) {
-                customer.setRoute(savedRoute);
-                customer = customerRepository.save(customer);
-                savedRoute.getCustomers().add(customer);
+                customer.setRoute(route);
+                route.getCustomers().add(customer);
             }
         }
 
-        savedTour.getRoutes().add(savedRoute);
+        tour.getRoutes().add(route);
 
-        savedTour = tourRepository.save(savedTour);
+        tour = tourRepository.save(tour);
 
         SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.CONCISE);
         SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.VERBOSE);
 
-        return new ResponseEntity<>(savedTour, HttpStatus.OK);
+        return new ResponseEntity<>(tour, HttpStatus.OK);
     }
 
     @GetMapping("excel/{year}")
@@ -219,5 +212,17 @@ public class VRPController {
                 .ok()
                 .headers(headers)
                 .body(byteArray);
+    }
+
+    @GetMapping("revert/{year}/{rayon}")
+    public ResponseEntity<Tour> revertChangesForYearAndRayon(@PathVariable Integer year, @PathVariable Integer rayon) {
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("commit/{year}/{rayon}")
+    public ResponseEntity<Tour> commitChangesForYearAndRayon(@PathVariable Integer year, @PathVariable Integer rayon) {
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

@@ -1,15 +1,16 @@
 package com.samichlaus.api.controller;
 
 import java.io.IOException;
-import java.util.UUID;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
+import com.graphhopper.json.Statement;
 import com.samichlaus.api.domain.constants.Group;
 import com.samichlaus.api.domain.constants.Rayon;
 import com.samichlaus.api.domain.constants.Version;
+import com.samichlaus.api.domain.customer.CustomerPatchDto;
 import com.samichlaus.api.domain.route.Route;
+import com.samichlaus.api.domain.route.RouteRepository;
 import com.samichlaus.api.domain.tour.Tour;
 import com.samichlaus.api.domain.tour.TourRepository;
 import com.samichlaus.api.domain.user.UserRepository;
@@ -18,16 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.samichlaus.api.domain.customer.Customer;
 import com.samichlaus.api.domain.customer.CustomerDto;
@@ -52,10 +45,13 @@ public class CustomerController {
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
     private final TourRepository tourRepository;
+    private final RouteRepository routeRepository;
     private final CSVService csvService;
 
 
-    public CustomerController(CustomerRepository customerRepository, AddressRepository addressRepository, CSVService csvService, TourRepository tourRepository) {
+
+    public CustomerController(CustomerRepository customerRepository, AddressRepository addressRepository, CSVService csvService, TourRepository tourRepository, RouteRepository routeRepository) {
+        this.routeRepository = routeRepository;
         this.tourRepository = tourRepository;
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
@@ -89,9 +85,9 @@ public class CustomerController {
         _customer.setLastModified(new Date());
         if (_customer.getVisitRayon() == null) {
             _customer.setVisitRayon(address.get().getRayon());
-        }  
+        }
         Customer customer = customerRepository.save(_customer);
-        return new ResponseEntity<>(customer, HttpStatus.CREATED); 
+        return new ResponseEntity<>(customer, HttpStatus.CREATED);
     }
 
     @PostMapping("tour")
@@ -120,7 +116,6 @@ public class CustomerController {
                 if (route.getGroup() == Group.Z) {
                     _customer.setRoute(route);
                     customer = customerRepository.save(_customer);
-                    route.getCustomers().add(customer);
                     break;
                 }
             }
@@ -129,13 +124,20 @@ public class CustomerController {
             Tour newTour = Tour.builder()
                     .rayon(_customer.getVisitRayon())
                     .year(_customer.getYear())
+                    .date(LocalDate.of(_customer.getYear(), 1, 1))
+                    .lastModified(new Date())
+                    .user(user)
                     .version(Version.TST)
                     .build();
             customer = customerRepository.save(_customer);
             Route newRoute = Route.builder()
                     .customerStart(customer.getVisitTime())
                     .group(Group.Z)
+                    .tour(newTour)
+                    .user(user)
+                    .lastModified(new Date())
                     .build();
+            customer.setRoute(newRoute);
             newRoute.getCustomers().add(customer);
             newTour.getRoutes().add(newRoute);
             tourRepository.save(newTour);
@@ -161,7 +163,7 @@ public class CustomerController {
             _customer.setSeniors(customerDto.getSeniors());
             _customer.setYear(customerDto.getYear());
             _customer.setVisitTime(customerDto.getVisitTime());
-            _customer.setVisitRayon(Rayon.fromValue(customerDto.getVisitRayon()));
+            _customer.setVisitRayon(customerDto.getVisitRayon());
             _customer.setAddress(address.get());
             return new ResponseEntity<>(customerRepository.save(_customer), HttpStatus.OK);
         } else {
@@ -178,6 +180,112 @@ public class CustomerController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PatchMapping("")
+    public ResponseEntity<HttpStatus> patchCustomer(@Valid @RequestBody CustomerPatchDto customerPatchDto) throws ResourceNotFoundException {
+        Optional<Customer> customerOpt = customerRepository.findByUUID(customerPatchDto.getCustomerId());
+        if (customerOpt.isPresent()) {
+            Customer customer = customerOpt.get();
+            if (customerPatchDto.getAddressId() != null) {
+                Optional<Address> addressOpt = addressRepository.findByUUID(customerPatchDto.getAddressId());
+                if (addressOpt.isPresent()) {
+                    customer.setAddress(addressOpt.get());
+                } else {
+                    throw new ResourceNotFoundException("Address does not exist.");
+                }
+            }
+            if (customerPatchDto.getFirstName() != null) {
+                customer.setFirstName(customerPatchDto.getFirstName());
+            }
+            if (customerPatchDto.getLastName() != null) {
+                customer.setLastName(customerPatchDto.getLastName());
+            }
+            if (customerPatchDto.getChildren() != null) {
+                customer.setChildren(customerPatchDto.getChildren());
+            }
+            if (customerPatchDto.getSeniors() != null) {
+                customer.setSeniors(customerPatchDto.getSeniors());
+            }
+            if (customerPatchDto.getYear() != null) {
+                customer.setYear(customerPatchDto.getYear());
+            }
+            if (customerPatchDto.getVisitTime() != null) {
+                customer.setVisitTime(customerPatchDto.getVisitTime());
+            }
+            if (customerPatchDto.getVisitRayon() != null) {
+                customer.setVisitRayon(customerPatchDto.getVisitRayon());
+            }
+            if (customerPatchDto.getRouteId() != null) {
+                Optional<Route> routeOpt = routeRepository.findByUUID(customerPatchDto.getRouteId());
+                if (routeOpt.isPresent()) {
+                    customer.setRoute(routeOpt.get());
+                } else {
+                    throw new ResourceNotFoundException("Address does not exist.");
+                }
+            }
+            customer.setLastModified(new Date());
+            customerRepository.save(customer);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            throw new ResourceNotFoundException("Customer does not exist");
+        }
+    }
+
+    @PatchMapping("many")
+    public ResponseEntity<List<Customer>> patchManyCustomers(@Valid @RequestBody List<CustomerPatchDto> customerDtos) throws ResourceNotFoundException {
+        List<Customer> customers = new ArrayList<>(customerDtos.size());
+        for (CustomerPatchDto customerPatchDto: customerDtos) {
+            Optional<Customer> customerOpt = customerRepository.findByUUID(customerPatchDto.getCustomerId());
+            if (customerOpt.isPresent()) {
+                Customer customer = customerOpt.get();
+                if (customerPatchDto.getAddressId() != null) {
+                    Optional<Address> addressOpt = addressRepository.findByUUID(customerPatchDto.getAddressId());
+                    if (addressOpt.isPresent()) {
+                        customer.setAddress(addressOpt.get());
+                    } else {
+                        throw new ResourceNotFoundException("Address does not exist.");
+                    }
+                }
+                if (customerPatchDto.getFirstName() != null) {
+                    customer.setFirstName(customerPatchDto.getFirstName());
+                }
+                if (customerPatchDto.getLastName() != null) {
+                    customer.setLastName(customerPatchDto.getLastName());
+                }
+                if (customerPatchDto.getChildren() != null) {
+                    customer.setChildren(customerPatchDto.getChildren());
+                }
+                if (customerPatchDto.getSeniors() != null) {
+                    customer.setSeniors(customerPatchDto.getSeniors());
+                }
+                if (customerPatchDto.getYear() != null) {
+                    customer.setYear(customerPatchDto.getYear());
+                }
+                if (customerPatchDto.getVisitTime() != null) {
+                    customer.setVisitTime(customerPatchDto.getVisitTime());
+                }
+                if (customerPatchDto.getVisitRayon() != null) {
+                    customer.setVisitRayon(customerPatchDto.getVisitRayon());
+                }
+                if (customerPatchDto.getRouteId() != null) {
+                    Optional<Route> routeOpt = routeRepository.findByUUID(customerPatchDto.getRouteId());
+                    if (routeOpt.isPresent()) {
+                        customer.setRoute(routeOpt.get());
+                    } else {
+                        throw new ResourceNotFoundException("Address does not exist.");
+                    }
+                }
+                customer.setLastModified(new Date());
+                customers.add(customer);
+            } else {
+                throw new ResourceNotFoundException("Customer does not exist");
+            }
+        }
+
+        customerRepository.saveAll(customers);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("years")
