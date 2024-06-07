@@ -56,11 +56,10 @@ public class XLSService {
                 throw new ResourceNotFoundException("No tour exists for Rayon " + rayon + " and Year " + year);
             Tour tour = tourOpt.get();
 
-            System.out.println(tour.getRoutes().size());
             int groupCount = 0;
             for (Route route: tour.getRoutes()) {
                 if (route.getGroup() == Group.Z) {
-                    break;
+                    continue;
                 }
                 Collections.sort(route.getCustomers());
                 // Clone the "Vorlage" sheet
@@ -71,15 +70,15 @@ public class XLSService {
                 workbook.setSheetName(workbook.getSheetIndex(currentGroupSheet), route.getGroup().toString() + " Rayon " + "I".repeat(rayon));
                 eingabeSheet.getRow(3 + rayon).getCell(2).setCellValue(tour.getDate());
                 if (!route.getSamichlaus().isBlank())
-                    currentGroupSheet.getRow(1).getCell(1).setCellValue(route.getSamichlaus());
+                    currentGroupSheet.getRow(1).getCell(2).setCellValue(route.getSamichlaus());
                 if (!route.getRuprecht().isBlank())
-                    currentGroupSheet.getRow(2).getCell(1).setCellValue(route.getRuprecht());
+                    currentGroupSheet.getRow(2).getCell(2).setCellValue(route.getRuprecht());
                 if (!route.getRuprecht().isBlank())
-                    currentGroupSheet.getRow(3).getCell(1).setCellValue(route.getSchmutzli());
+                    currentGroupSheet.getRow(3).getCell(2).setCellValue(route.getSchmutzli());
                 if (!route.getEngel1().isBlank())
-                    currentGroupSheet.getRow(4).getCell(1).setCellValue(route.getEngel1());
+                    currentGroupSheet.getRow(4).getCell(2).setCellValue(route.getEngel1());
                 if (!route.getEngel2().isBlank())
-                    currentGroupSheet.getRow(5).getCell(1).setCellValue(route.getEngel2());
+                    currentGroupSheet.getRow(5).getCell(2).setCellValue(route.getEngel2());
 
                 currentGroupSheet.getRow(0).getCell(1).setCellValue("I".repeat(rayon));
                 currentGroupSheet.getRow(0).getCell(4).setCellValue(route.getGroup().toString());
@@ -99,9 +98,8 @@ public class XLSService {
                         currentRow.getCell(7).setCellValue(((double) Math.abs(duration)) / (3600 * 24));
                     } else {
                         int index = customers.size() - 1;
-                        int lastToDepot = Math.round((float) graphhopperService.calculateTime(customers.get(index).getAddress().getLatitude(), customers.get(index).getAddress().getLongitude(), Constants.DEPOT_LAT_LNG.get(0), Constants.DEPOT_LAT_LNG.get(1), customers.get(index).getTransport().toString()) / 1000 / 60 /5) * 5;
-                        int durationLastToDepot = lastToDepot + Constants.getChildrenSeniorCapacity(customers.get(index).getSeniors(), customers.get(index).getSeniors());
-                        currentRow.getCell(7).setCellValue(((double) durationLastToDepot) / ( 60 * 24));
+                        int lastToDepot = route.getCustomers().get(index).getVisitTime().toSecondOfDay() - route.getCustomerEnd().toSecondOfDay();
+                        currentRow.getCell(7).setCellValue(((double) Math.abs(lastToDepot)) / (3600 * 24));
                     }
 
                     switch (customers.get(i).getSeniors()) {

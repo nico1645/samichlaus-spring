@@ -15,6 +15,7 @@ import com.samichlaus.api.domain.tour.Tour;
 import com.samichlaus.api.domain.tour.TourRepository;
 import com.samichlaus.api.domain.user.UserRepository;
 import com.samichlaus.api.exception.IllegalCSVFileException;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -165,6 +166,11 @@ public class CustomerController {
             _customer.setVisitTime(customerDto.getVisitTime());
             _customer.setVisitRayon(customerDto.getVisitRayon());
             _customer.setAddress(address.get());
+            if (customerDto.getPhone() != null)
+                _customer.setPhone(customerDto.getPhone());
+            if (customerDto.getEmail() != null)
+                _customer.setEmail(customerDto.getEmail());
+
             return new ResponseEntity<>(customerRepository.save(_customer), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -183,6 +189,7 @@ public class CustomerController {
     }
 
     @PatchMapping("")
+    @Transactional
     public ResponseEntity<HttpStatus> patchCustomer(@Valid @RequestBody CustomerPatchDto customerPatchDto) throws ResourceNotFoundException {
         Optional<Customer> customerOpt = customerRepository.findByUUID(customerPatchDto.getCustomerId());
         if (customerOpt.isPresent()) {
@@ -221,7 +228,7 @@ public class CustomerController {
                 if (routeOpt.isPresent()) {
                     customer.setRoute(routeOpt.get());
                 } else {
-                    throw new ResourceNotFoundException("Address does not exist.");
+                    throw new ResourceNotFoundException("Route does not exist.");
                 }
             }
             customer.setLastModified(new Date());
@@ -233,6 +240,7 @@ public class CustomerController {
     }
 
     @PatchMapping("many")
+    @Transactional
     public ResponseEntity<List<Customer>> patchManyCustomers(@Valid @RequestBody List<CustomerPatchDto> customerDtos) throws ResourceNotFoundException {
         List<Customer> customers = new ArrayList<>(customerDtos.size());
         for (CustomerPatchDto customerPatchDto: customerDtos) {
@@ -273,7 +281,7 @@ public class CustomerController {
                     if (routeOpt.isPresent()) {
                         customer.setRoute(routeOpt.get());
                     } else {
-                        throw new ResourceNotFoundException("Address does not exist.");
+                        throw new ResourceNotFoundException("Route does not exist.");
                     }
                 }
                 customer.setLastModified(new Date());
@@ -306,5 +314,15 @@ public class CustomerController {
         }
 
         throw new IllegalCSVFileException("Please upload a csv file, the provided file is not a valid csv");
+    }
+
+    @GetMapping("get/{year}")
+    public ResponseEntity<List<Customer>> getCustomerByYear(@PathVariable Integer year) {
+        List<Customer> customers = customerRepository.findByYear(year);
+        if (!customers.isEmpty()) {
+            return new ResponseEntity<>(customers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

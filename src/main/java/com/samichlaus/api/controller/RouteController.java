@@ -13,6 +13,7 @@ import com.samichlaus.api.domain.user.User;
 import com.samichlaus.api.exception.InternalServerErrorException;
 import com.samichlaus.api.exception.ResourceNotFoundException;
 import com.samichlaus.api.services.CSVService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -67,6 +68,7 @@ public class RouteController {
     }
 
     @PatchMapping("")
+    @Transactional
     public ResponseEntity<HttpStatus> updateRoute(@Valid @RequestBody RoutePatchDto routePatchDto) throws ResourceNotFoundException {
         Optional<Route> routeOpt = routeRepository.findByUUID(routePatchDto.getRouteId());
         if (routeOpt.isPresent()) {
@@ -75,7 +77,7 @@ public class RouteController {
                 route.setCustomerStart(routePatchDto.getCustomerStart());
             }
             if (routePatchDto.getCustomerEnd() != null) {
-                route.setCustomerStart(routePatchDto.getCustomerEnd());
+                route.setCustomerEnd(routePatchDto.getCustomerEnd());
             }
             if (routePatchDto.getGroup() != null) {
                 route.setGroup(routePatchDto.getGroup());
@@ -115,6 +117,7 @@ public class RouteController {
     }
 
     @PatchMapping("many")
+    @Transactional
     public ResponseEntity<HttpStatus> updateManyRoutes(@Valid @RequestBody List<RoutePatchDto> routePatchDtos) throws ResourceNotFoundException {
         List<Route> routes = new ArrayList<>();
         for (RoutePatchDto routePatchDto: routePatchDtos) {
@@ -126,7 +129,7 @@ public class RouteController {
                     route.setCustomerStart(routePatchDto.getCustomerStart());
                 }
                 if (routePatchDto.getCustomerEnd() != null) {
-                    route.setCustomerStart(routePatchDto.getCustomerEnd());
+                    route.setCustomerEnd(routePatchDto.getCustomerEnd());
                 }
                 if (routePatchDto.getGroup() != null) {
                     route.setGroup(routePatchDto.getGroup());
@@ -168,6 +171,7 @@ public class RouteController {
     }
 
     @PostMapping("")
+    @Transactional
     public ResponseEntity<Route> createRoute(@Valid @RequestBody RouteDto routeDto, Authentication authentication) throws ResourceNotFoundException {
         User user = (User) authentication.getPrincipal();
 
@@ -185,6 +189,7 @@ public class RouteController {
     }
 
     @DeleteMapping("{id}")
+    @Transactional
     public ResponseEntity<HttpStatus> deleteRoute(@PathVariable("id") UUID uuid) throws ResourceNotFoundException, InternalServerErrorException {
         Optional<Route> routeOpt = routeRepository.findByUUID(uuid);
         if (routeOpt.isPresent()) {

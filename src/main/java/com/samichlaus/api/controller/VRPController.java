@@ -79,6 +79,11 @@ public class VRPController {
             throw new ResourceNotFoundException("No data for year and rayon");
         }
 
+        for (Customer c: customers) {
+            c.setRoute(null);
+        }
+        customerRepository.saveAllAndFlush(customers);
+
         LocalTime startTime = config.getStartTime();
         LocalDate visitDate = LocalDate.now();
 

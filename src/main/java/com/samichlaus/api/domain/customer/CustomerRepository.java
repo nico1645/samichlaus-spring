@@ -22,6 +22,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     List<Customer> findByYearAndVisitRayonAndVersion(int year, Rayon visitRayon, Version version);
 
+    List<Customer> findByYear(int year);
+
     @Query(value = "SELECT * FROM customers WHERE customers.id IN :customerIds", nativeQuery = true)
     List<Customer> findByIdIn(List<Integer> customerIds);
 }

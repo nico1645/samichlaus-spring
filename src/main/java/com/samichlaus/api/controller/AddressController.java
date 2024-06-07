@@ -74,13 +74,41 @@ public class AddressController {
         addresses.addAll(addressRepository.findAll());
       else
         if (limit == null)
-          addresses.addAll(addressRepository.findByAddressContaining(address, Limit.unlimited()));
+          addresses.addAll(addressRepository.findByAddressContainingIgnoreCaseOrderByAddress(address, Limit.unlimited()));
         else
-          addresses.addAll(addressRepository.findByAddressContaining(address, Limit.of(limit)));
+          addresses.addAll(addressRepository.findByAddressContainingIgnoreCaseOrderByAddress(address, Limit.of(limit)));
 
       if (addresses.isEmpty()) {
         return new ResponseEntity<>(addresses, HttpStatus.NO_CONTENT);
       }
+    addresses.sort((a1, a2) -> {
+      // Split addresses into street and house number
+      String[] parts1 = a1.getAddress().split("\\s+", 2); // Split by first whitespace
+      String[] parts2 = a2.getAddress().split("\\s+", 2);
+
+      // Compare street names
+      int streetComparison = parts1[0].compareTo(parts2[0]);
+      if (streetComparison != 0) {
+        return streetComparison;
+      }
+
+      // Extract house numbers and optional letters
+      int houseNumber2 = 0;
+      Integer houseNumber1 = 0;
+      try {
+        houseNumber1 = parts1.length > 1 ? Integer.parseInt(parts1[1]) : 0;
+      } catch (Exception ex) {
+        houseNumber1 = Integer.parseInt(parts1[1].substring(0, parts1[1].length()-1));
+      }
+      try {
+        houseNumber2 = parts2.length > 1 ? Integer.parseInt(parts2[1]) : 0;
+      } catch (Exception ex) {
+        houseNumber2 = Integer.parseInt(parts2[1].substring(0, parts2[1].length()-1));
+      }
+
+      // Compare house numbers
+      return houseNumber1.compareTo(houseNumber2);
+    });
 
       return new ResponseEntity<>(addresses, HttpStatus.OK);
   }

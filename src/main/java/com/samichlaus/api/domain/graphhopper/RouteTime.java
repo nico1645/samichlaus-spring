@@ -17,6 +17,6 @@ public class RouteTime {
     private LocalTime startTime;
     @NotNull
     private List<Customer> customers;
-    @Null
+    @NotNull
     private LocalTime endTime;
 }

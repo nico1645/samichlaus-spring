@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface AddressRepository extends JpaRepository<Address, Integer>{
-    List<Address> findByAddressContaining(String address, Limit limit);
+    List<Address> findByAddressContainingIgnoreCaseOrderByAddress(String address, Limit limit);
     List<Address> findByAddress(String address);
     @Query(value = "Select * FROM addresses where addresses.address_id = :address_id", nativeQuery = true)
     Optional<Address> findByUUID(@Param("address_id") UUID addressId);

@@ -45,9 +45,12 @@ public class CustomerDto {
     @NotNull(message = "The visit date is required.")
     private LocalTime visitTime = LocalTime.of(0, 0);
     @NotNull(message = "Rayon is required")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private Rayon visitRayon;
     private UUID routeId;
+
+    private String email;
+    private String phone;
 
     public Customer toCustomer() {
         return Customer.builder()
