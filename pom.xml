@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.samichlaus</groupId>
     <artifactId>api</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <name>api</name>
     <description>Backend API for Samichlaus Creator website</description>
     <properties>
