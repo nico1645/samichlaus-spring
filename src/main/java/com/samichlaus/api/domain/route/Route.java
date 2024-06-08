@@ -69,7 +69,7 @@ public class Route {
 
     @NotNull
     @Builder.Default()
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "transport_type")
     private Transportation transport = Transportation.foot;
 
@@ -78,6 +78,7 @@ public class Route {
     private LocalTime customerStart;
 
     @Column(name = "customer_end")
+    @Builder.Default()
     private LocalTime customerEnd = LocalTime.of(0, 0);
 
     @JsonManagedReference

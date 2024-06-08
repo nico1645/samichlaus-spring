@@ -57,6 +57,7 @@ public class Customer implements Comparable<Customer> {
     private Integer year;
     @NotNull
     @Builder.Default
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "transport_type")
     private Transportation transport = Transportation.foot;
     @NotNull

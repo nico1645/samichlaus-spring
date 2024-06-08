@@ -18,8 +18,8 @@ spring:
         show-sql: true
         database-platform: org.hibernate.community.dialect.SQLiteDialect
 samichlaus:
-    backend-server: api.samichlaus.famba.me
-    frontend-server: samichlaus.famba.me
+    backend-server: test.backend
+    frontend-server: test.frontend
     path-to-osm-file: /Users/nba/projects/samichlaus-spring/data/osm/hergiswil.osm.pbf
     path-to-graphhopper-data: /Users/nba/projects/samichlaus-spring/data/graphhopper
     path-to-excel-template: /Users/nba/projects/samichlaus-spring/api/src/main/resources/templates/Laufliste.xlsm
@@ -49,10 +49,11 @@ spring:
         database: postgresql
         database-platform: org.hibernate.dialect.PostgreSQLDialect
 samichlaus:
-    backend-server: api.samichlaus.famba.me
-    frontend-server: samichlaus.famba.me
+    backend-server: ${BACKEND_SERVER}
+    frontend-server: ${FRONTEND_SERVER}
     path-to-osm-file: ${PATH_TO_OSM_FILE}
     path-to-graphhopper-data: ${PATH_TO_GRAPHHOPPER_DATA}
+    path-to-excel-template: ${PATH_TO_EXCEL_TEMPLATE}
 ---
 spring:
     config:
@@ -70,8 +71,8 @@ spring:
             database: h2
             database-platform: org.hibernate.dialect.H2Dialect
 samichlaus:
-    backend-server: api.samichlaus.famba.me
-    frontend-server: samichlaus.famba.me
+    backend-server: test.backend
+    frontend-server: test.frontend
     path-to-osm-file: /Users/nba/projects/samichlaus-spring/data/osm/hergiswil.osm.pbf
     path-to-graphhopper-data: /Users/nba/projects/samichlaus-spring/data/graphhopper
     path-to-excel-template: /Users/nba/projects/samichlaus-spring/api/src/main/resources/templates/Laufliste.xlsm
@@ -102,8 +103,8 @@ spring:
         database: postgresql
         database-platform: org.hibernate.dialect.PostgreSQLDialect
 samichlaus:
-    backend-server: api.samichlaus.famba.me
-    frontend-server: samichlaus.famba.me
+    backend-server: test.backend
+    frontend-server: test.frontend
     path-to-osm-file: /Users/nba/projects/samichlaus-spring/data/osm/hergiswil.osm.pbf
     path-to-graphhopper-data: /Users/nba/projects/samichlaus-spring/data/graphhopper
     path-to-excel-template: /Users/nba/projects/samichlaus-spring/api/src/main/resources/templates/Laufliste.xlsm

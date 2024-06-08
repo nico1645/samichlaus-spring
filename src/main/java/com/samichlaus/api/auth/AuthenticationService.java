@@ -45,7 +45,7 @@ public class AuthenticationService {
         .authorities(List.of(Authoritie.read))
         .last_login_date(new Date())
         .created_at(new Date())
-        .isActive(true)
+        .isActive(false)
         .isNotLocked(true)
         .failed_login_attempts(0)
         .build();

@@ -96,14 +96,18 @@ public class AddressController {
       int houseNumber2 = 0;
       Integer houseNumber1 = 0;
       try {
-        houseNumber1 = parts1.length > 1 ? Integer.parseInt(parts1[1]) : 0;
-      } catch (Exception ex) {
-        houseNumber1 = Integer.parseInt(parts1[1].substring(0, parts1[1].length()-1));
-      }
-      try {
-        houseNumber2 = parts2.length > 1 ? Integer.parseInt(parts2[1]) : 0;
-      } catch (Exception ex) {
-        houseNumber2 = Integer.parseInt(parts2[1].substring(0, parts2[1].length()-1));
+        try {
+          houseNumber1 = parts1.length > 1 ? Integer.parseInt(parts1[1]) : 0;
+        } catch (Exception ex) {
+          houseNumber1 = Integer.parseInt(parts1[1].substring(0, parts1[1].length()-1));
+        }
+        try {
+          houseNumber2 = parts2.length > 1 ? Integer.parseInt(parts2[1]) : 0;
+        } catch (Exception ex) {
+          houseNumber2 = Integer.parseInt(parts2[1].substring(0, parts2[1].length()-1));
+        }
+      } catch (Exception ee) {
+        return 0;
       }
 
       // Compare house numbers
