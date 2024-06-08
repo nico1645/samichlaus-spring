@@ -90,7 +90,7 @@ public class XLSService {
 
                 for (int i = 0; i < customers.size(); i++) {
                     Row currentRow = currentGroupSheet.getRow(8+i);
-                    currentRow.getCell(2).setCellValue(customers.get(i).getLastName() + " " + customers.get(i).getFirstName());
+                    currentRow.getCell(2).setCellValue(customers.get(i).getLastName().strip() + " " + customers.get(i).getFirstName().strip());
                     currentRow.getCell(3).setCellValue(customers.get(i).getAddress().getAddress());
                     currentRow.getCell(4).setCellValue(customers.get(i).getChildren());
                     if (i+1 < customers.size()) {
