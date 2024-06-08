@@ -147,16 +147,32 @@ public class CustomerController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable("id") UUID uuid, @Valid @RequestBody CustomerDto customerDto) throws InternalServerErrorException {
+    public ResponseEntity<Customer> updateCustomer(@PathVariable("id") UUID uuid, @Valid @RequestBody CustomerDto customerDto) throws InternalServerErrorException, ResourceNotFoundException {
         Optional<Customer> customer = customerRepository.findByUUID(uuid);
         Optional<Address> address = addressRepository.findByUUID(customerDto.getAddressId());
 
         if (address.isEmpty()) {
             throw new InternalServerErrorException("Address not found");
         }
+
   
         if (customer.isPresent()) {
             Customer _customer = customer.get();
+            if (_customer.getVisitRayon().getValue() != customerDto.getVisitRayon().getValue() || _customer.getYear().intValue() != customerDto.getYear().intValue()) {
+                Optional<Tour> tourOpt = tourRepository.findTourByYearAndRayonAndVersion(customerDto.getYear(), customerDto.getVisitRayon(), Version.TST);
+                if (tourOpt.isPresent()) {
+                    Tour tour = tourOpt.get();
+                    List<Route> routes = tour.getRoutes();
+                    for (Route route : routes) {
+                        if (route.getGroup() == Group.Z) {
+                            _customer.setRoute(route);
+                            break;
+                        }
+                    }
+                } else {
+                    throw new ResourceNotFoundException("No Tour exist for the year and rayon. Please create one first");
+                }
+            }
             _customer.setFirstName(customerDto.getFirstName());
             _customer.setLastName(customerDto.getLastName());
             _customer.setLastModified(new Date());

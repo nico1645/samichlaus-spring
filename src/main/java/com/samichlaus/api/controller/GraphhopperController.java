@@ -48,15 +48,15 @@ public class GraphhopperController {
             currentCustomer = visits.get(i);
             currentCustomerPlusOne = visits.get(i+1);
 
-            timeInterval = Math.round((float) graphhopperService.calculateTime(currentCustomerPlusOne.getAddress().getLatitude(), currentCustomerPlusOne.getAddress().getLongitude(), currentCustomer.getAddress().getLatitude(), currentCustomer.getAddress().getLongitude(), currentCustomer.getTransport().toString()) / 1000 / 60 / 5) * 5;
-            timeInterval += Constants.getChildrenTime(currentCustomer.getChildren()) + Constants.getSeniorTime(currentCustomer.getSeniors());
+            timeInterval = Math.round((float) graphhopperService.calculateTime(currentCustomer.getAddress().getLatitude(), currentCustomer.getAddress().getLongitude(), currentCustomerPlusOne.getAddress().getLatitude(), currentCustomerPlusOne.getAddress().getLongitude(), currentCustomer.getTransport().toString()) / 1000 / 60 / 5) * 5;
+            timeInterval += Constants.getChildrenSeniorCapacity(currentCustomer.getChildren(), currentCustomer.getSeniors());
             currentTime = currentTime.plusMinutes(timeInterval);
             currentCustomerPlusOne.setVisitTime(Time.valueOf(currentTime).toLocalTime());
             updatedCustomers.add(currentCustomerPlusOne);
         }
         currentCustomer = visits.get(visits.size()-1);
         timeInterval = Math.round((float) graphhopperService.calculateTime(currentCustomer.getAddress().getLatitude(), currentCustomer.getAddress().getLongitude(), depotLatLng.get(0), depotLatLng.get(1), currentCustomer.getTransport().toString()) / 1000 / 60 / 5) * 5;
-        timeInterval += Constants.getChildrenTime(currentCustomer.getChildren()) + Constants.getSeniorTime(currentCustomer.getSeniors());
+        timeInterval += Constants.getChildrenSeniorCapacity(currentCustomer.getChildren(), currentCustomer.getSeniors());
         LocalTime endTime = currentTime.plusMinutes(timeInterval);
 
         routeTime.setEndTime(endTime);
