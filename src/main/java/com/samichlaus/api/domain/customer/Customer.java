@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.samichlaus.api.domain.constants.Rayon;
 import com.samichlaus.api.domain.constants.Transportation;
 import com.samichlaus.api.domain.constants.Version;
+import com.samichlaus.api.domain.mail.MailStatus;
 import com.samichlaus.api.domain.route.Route;
 import com.samichlaus.api.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -94,6 +95,11 @@ public class Customer implements Comparable<Customer> {
     private User user;
     @Column(name = "last_modified")
     private Date lastModified;
+
+    @Builder.Default
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "mail_status", nullable = false)
+    private MailStatus mailStatus = MailStatus.NOT_SENT;
 
     @Transient
     @JsonProperty("visitRayon")

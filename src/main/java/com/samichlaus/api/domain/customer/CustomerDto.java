@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.samichlaus.api.domain.constants.Group;
 import com.samichlaus.api.domain.constants.Rayon;
+import com.samichlaus.api.domain.mail.MailStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Max;
@@ -51,6 +52,8 @@ public class CustomerDto {
 
     private String email;
     private String phone;
+    @Enumerated(EnumType.ORDINAL)
+    private MailStatus mailStatus;
 
     public Customer toCustomer() {
         return Customer.builder()
