@@ -15,4 +15,5 @@ public class YAMLConfig {
     private String pathToOsmFile;
     private String pathToGraphhopperData;
     private String pathToExcelTemplate;
+    private String pathToSamichlausIcon;
 }

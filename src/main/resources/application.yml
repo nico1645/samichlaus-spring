@@ -79,6 +79,7 @@ samichlaus:
     path-to-osm-file: ${PATH_TO_OSM_FILE}
     path-to-graphhopper-data: ${PATH_TO_GRAPHHOPPER_DATA}
     path-to-excel-template: ${PATH_TO_EXCEL_TEMPLATE}
+    path-to-samichlaus-icon: ${PATH_TO_SAMICHLAUS_ICON}
 ---
 spring:
     config:
@@ -155,3 +156,4 @@ samichlaus:
     path-to-osm-file: /Users/nba/projects/samichlaus-spring/data/osm/hergiswil.osm.pbf
     path-to-graphhopper-data: /Users/nba/projects/samichlaus-spring/data/graphhopper
     path-to-excel-template: /Users/nba/projects/samichlaus-spring/api/src/main/resources/templates/Laufliste.xlsm
+    path-to-samichlaus-icon: /Users/nba/projects/samichlaus-spring/data/samichlaus_email_icon.png

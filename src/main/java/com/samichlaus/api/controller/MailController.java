@@ -1,6 +1,7 @@
 package com.samichlaus.api.controller;
 
 
+import com.samichlaus.api.config.YAMLConfig;
 import com.samichlaus.api.domain.customer.Customer;
 import com.samichlaus.api.domain.customer.CustomerRepository;
 import com.samichlaus.api.domain.mail.MailDto;
@@ -8,6 +9,7 @@ import com.samichlaus.api.domain.mail.MailStatus;
 import com.samichlaus.api.services.MailService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
@@ -219,10 +221,10 @@ public class MailController {
     private final MailService mailService;
     private final CustomerRepository customerRepository;
 
-    public MailController(MailService mailService, CustomerRepository customerRepository) {
+    public MailController(MailService mailService, CustomerRepository customerRepository, @Qualifier("config") YAMLConfig yamlConfig) {
         this.mailService = mailService;
         this.customerRepository = customerRepository;
-        this.imgFile = new File("/Users/nba/projects/samichlaus-spring/data/samichlaus_email_icon.png");
+        this.imgFile = new File(yamlConfig.getPathToSamichlausIcon());
     }
 
 
