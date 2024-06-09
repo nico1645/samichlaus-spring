@@ -10,6 +10,7 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -232,7 +233,7 @@ public class MailController {
         try {
             mailService.sendMail(mailDto.getEmail(), body, "Samichlaus Besuchszeit", imgFile);
             customer.setMailStatus(MailStatus.SENT);
-        } catch (MessagingException | UnsupportedEncodingException e) {
+        } catch (MessagingException | UnsupportedEncodingException | MailException e) {
             customer.setMailStatus(MailStatus.FAILED);
         }
         customer = customerRepository.save(customer);
@@ -252,7 +253,7 @@ public class MailController {
                     customer.setMailStatus(MailStatus.SENT);
                     customers.add(customer);
                 } else throw new IllegalArgumentException("Mail sent but Customer with id " + mailDto.getCustomerId() + " does not exist.");
-            } catch (MessagingException | UnsupportedEncodingException e) {
+            } catch (MessagingException | UnsupportedEncodingException | MailException e) {
                 Optional<Customer> c = customerRepository.findByUUID(mailDto.getCustomerId());
                 if (c.isPresent()) {
                     Customer customer = c.get();
