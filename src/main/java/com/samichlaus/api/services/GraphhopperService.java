@@ -27,7 +27,10 @@ public class GraphhopperService {
         this.hopper
             .setOSMFile(config.getPathToOsmFile())
             .setGraphHopperLocation(config.getPathToGraphhopperData())
-            .setProfiles(new Profile("foot").setVehicle("foot").setWeighting("custom").setTurnCosts(false))
+            .setProfiles(
+                    List.of(new Profile("foot").setVehicle("foot").setWeighting("custom").setTurnCosts(false),
+                    new Profile("car").setVehicle("car").setWeighting("custom").setTurnCosts(true))
+                )
                 .setElevation(true)
                 .importOrLoad();
     }

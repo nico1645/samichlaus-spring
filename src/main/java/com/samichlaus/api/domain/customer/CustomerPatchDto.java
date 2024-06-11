@@ -1,6 +1,7 @@
 package com.samichlaus.api.domain.customer;
 
 import com.samichlaus.api.domain.constants.Rayon;
+import com.samichlaus.api.domain.constants.Transportation;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Max;
@@ -28,7 +29,9 @@ public class CustomerPatchDto {
     @Max(value = 10000, message = "The maximum value is 100")
     private Integer year;
     private LocalTime visitTime = LocalTime.of(0, 0);
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private Rayon visitRayon;
     private UUID routeId;
+    @Enumerated(EnumType.STRING)
+    private Transportation transport;
 }

@@ -8,9 +8,7 @@ import java.util.*;
 import com.graphhopper.jsprit.core.algorithm.termination.TimeTermination;
 import com.graphhopper.jsprit.core.problem.job.Job;
 import com.graphhopper.jsprit.core.reporting.SolutionPrinter;
-import com.samichlaus.api.domain.constants.Constants;
-import com.samichlaus.api.domain.constants.Rayon;
-import com.samichlaus.api.domain.constants.Version;
+import com.samichlaus.api.domain.constants.*;
 import com.samichlaus.api.domain.route.Route;
 import com.samichlaus.api.domain.route.RouteRepository;
 import com.samichlaus.api.domain.tour.Tour;
@@ -39,7 +37,6 @@ import com.graphhopper.jsprit.core.problem.solution.route.activity.TourActivity;
 import com.graphhopper.jsprit.core.util.Solutions;
 import com.samichlaus.api.domain.customer.Customer;
 import com.samichlaus.api.domain.customer.CustomerRepository;
-import com.samichlaus.api.domain.constants.Group;
 import com.samichlaus.api.domain.vrp.ConfigVRP;
 import com.samichlaus.api.exception.ResourceNotFoundException;
 import com.samichlaus.api.services.VRPService;
@@ -81,8 +78,9 @@ public class VRPController {
 
         for (Customer c: customers) {
             c.setRoute(null);
+            c.setTransport(Transportation.foot);
         }
-        customerRepository.saveAllAndFlush(customers);
+        customers = customerRepository.saveAllAndFlush(customers);
 
         LocalTime startTime = config.getStartTime();
         LocalDate visitDate = LocalDate.now();
@@ -198,8 +196,8 @@ public class VRPController {
 
         tour = tourRepository.save(tour);
 
-        SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.CONCISE);
-        SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.VERBOSE);
+        //SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.CONCISE);
+        //SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.VERBOSE);
 
         return new ResponseEntity<>(tour, HttpStatus.OK);
     }

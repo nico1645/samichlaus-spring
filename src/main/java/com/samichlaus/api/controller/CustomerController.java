@@ -239,6 +239,9 @@ public class CustomerController {
             if (customerPatchDto.getVisitRayon() != null) {
                 customer.setVisitRayon(customerPatchDto.getVisitRayon());
             }
+            if (customerPatchDto.getTransport() != null) {
+                customer.setTransport(customerPatchDto.getTransport());
+            }
             if (customerPatchDto.getRouteId() != null) {
                 Optional<Route> routeOpt = routeRepository.findByUUID(customerPatchDto.getRouteId());
                 if (routeOpt.isPresent()) {
@@ -291,6 +294,9 @@ public class CustomerController {
                 }
                 if (customerPatchDto.getVisitRayon() != null) {
                     customer.setVisitRayon(customerPatchDto.getVisitRayon());
+                }
+                if (customerPatchDto.getTransport() != null) {
+                    customer.setTransport(customerPatchDto.getTransport());
                 }
                 if (customerPatchDto.getRouteId() != null) {
                     Optional<Route> routeOpt = routeRepository.findByUUID(customerPatchDto.getRouteId());

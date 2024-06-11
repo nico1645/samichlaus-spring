@@ -10,9 +10,7 @@ import java.time.temporal.Temporal;
 import java.util.*;
 
 import com.samichlaus.api.config.YAMLConfig;
-import com.samichlaus.api.domain.constants.Constants;
-import com.samichlaus.api.domain.constants.Rayon;
-import com.samichlaus.api.domain.constants.Version;
+import com.samichlaus.api.domain.constants.*;
 import com.samichlaus.api.domain.customer.Customer;
 import com.samichlaus.api.domain.route.Route;
 import com.samichlaus.api.domain.route.RouteRepository;
@@ -25,8 +23,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import com.samichlaus.api.domain.constants.Group;
 
 @Service
 public class XLSService {
@@ -57,6 +53,8 @@ public class XLSService {
             Tour tour = tourOpt.get();
 
             int groupCount = 0;
+            List<Route> routes = tour.getRoutes();
+            routes.sort(Comparator.comparing(Route::getGroup));
             for (Route route: tour.getRoutes()) {
                 if (route.getGroup() == Group.Z) {
                     continue;
@@ -73,12 +71,14 @@ public class XLSService {
                     currentGroupSheet.getRow(1).getCell(2).setCellValue(route.getSamichlaus());
                 if (!route.getRuprecht().isBlank())
                     currentGroupSheet.getRow(2).getCell(2).setCellValue(route.getRuprecht());
-                if (!route.getRuprecht().isBlank())
+                if (!route.getSchmutzli().isBlank())
                     currentGroupSheet.getRow(3).getCell(2).setCellValue(route.getSchmutzli());
                 if (!route.getEngel1().isBlank())
                     currentGroupSheet.getRow(4).getCell(2).setCellValue(route.getEngel1());
                 if (!route.getEngel2().isBlank())
                     currentGroupSheet.getRow(5).getCell(2).setCellValue(route.getEngel2());
+                String transport = route.getTransport() == Transportation.foot ? "Laufen" : "Fahren";
+                currentGroupSheet.getRow(6).getCell(2).setCellValue(transport);
 
                 currentGroupSheet.getRow(0).getCell(1).setCellValue("I".repeat(rayon));
                 currentGroupSheet.getRow(0).getCell(4).setCellValue(route.getGroup().toString());
@@ -93,6 +93,8 @@ public class XLSService {
                     currentRow.getCell(2).setCellValue(customers.get(i).getLastName().strip() + " " + customers.get(i).getFirstName().strip());
                     currentRow.getCell(3).setCellValue(customers.get(i).getAddress().getAddress());
                     currentRow.getCell(4).setCellValue(customers.get(i).getChildren());
+                    if (customers.get(i).getTransport() == Transportation.car)
+                        currentRow.getCell(8).setCellValue("Fahren");
                     if (i+1 < customers.size()) {
                         int duration = customers.get(i).getVisitTime().toSecondOfDay() - customers.get(i+1).getVisitTime().toSecondOfDay();
                         currentRow.getCell(7).setCellValue(((double) Math.abs(duration)) / (3600 * 24));

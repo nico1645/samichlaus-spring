@@ -38,7 +38,7 @@ public class GraphhopperController {
         int timeInterval;
         Customer currentCustomer = visits.get(0);
         Customer currentCustomerPlusOne;
-        timeInterval = Math.round((float) graphhopperService.calculateTime(depotLatLng.get(0), depotLatLng.get(1), currentCustomer.getAddress().getLatitude(), currentCustomer.getAddress().getLongitude(), currentCustomer.getTransport().toString()) / 1000 / 60 / 5) * 5;
+        timeInterval = Math.round((float) graphhopperService.calculateTime(depotLatLng.get(0), depotLatLng.get(1), currentCustomer.getAddress().getLatitude(), currentCustomer.getAddress().getLongitude(), routeTime.getTransport().toString()) / 1000 / 60 / 5) * 5;
         currentTime = currentTime.plusMinutes(timeInterval);
         currentCustomer.setVisitTime(Time.valueOf(currentTime).toLocalTime());
         List<Customer> updatedCustomers = new ArrayList<>();
