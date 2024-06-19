@@ -22,9 +22,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Token {
 
-  @Id
-  @GeneratedValue
-  public Integer id;
+  @Id @GeneratedValue public Integer id;
 
   @Column(unique = true)
   public String token;

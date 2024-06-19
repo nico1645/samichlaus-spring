@@ -7,31 +7,36 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-
 import java.time.LocalTime;
 import java.util.UUID;
+import lombok.Data;
 
 @Data
 public class CustomerPatchDto {
-    @NotNull
-    private UUID customerId;
-    private UUID addressId;
-    private String firstName;
-    private String lastName;
-    @Min(value = 0, message = "The minimum value is 0")
-    @Max(value = 100, message = "The maximum value is 100")
-    private Integer children;
-    @Min(value = 0, message = "The minimum value is 0")
-    @Max(value = 100, message = "The maximum value is 100")
-    private Integer seniors;
-    @Min(value = 1700, message = "The minimum value is 0")
-    @Max(value = 10000, message = "The maximum value is 100")
-    private Integer year;
-    private LocalTime visitTime = LocalTime.of(0, 0);
-    @Enumerated(EnumType.ORDINAL)
-    private Rayon visitRayon;
-    private UUID routeId;
-    @Enumerated(EnumType.STRING)
-    private Transportation transport;
+  @NotNull private UUID customerId;
+  private UUID addressId;
+  private String firstName;
+  private String lastName;
+
+  @Min(value = 0, message = "The minimum value is 0")
+  @Max(value = 100, message = "The maximum value is 100")
+  private Integer children;
+
+  @Min(value = 0, message = "The minimum value is 0")
+  @Max(value = 100, message = "The maximum value is 100")
+  private Integer seniors;
+
+  @Min(value = 1700, message = "The minimum value is 0")
+  @Max(value = 10000, message = "The maximum value is 100")
+  private Integer year;
+
+  private LocalTime visitTime = LocalTime.of(0, 0);
+
+  @Enumerated(EnumType.ORDINAL)
+  private Rayon visitRayon;
+
+  private UUID routeId;
+
+  @Enumerated(EnumType.STRING)
+  private Transportation transport;
 }

@@ -140,7 +140,7 @@ spring:
         database: postgresql
         database-platform: org.hibernate.dialect.PostgreSQLDialect
     mail:
-        host: smtp.gmail.com
+        host: smtp.sadfhuasehfkuhsf.com
         port: 587
         username: ${SMTP_USERNAME}
         password: ${SMTP_PASSWORD}
