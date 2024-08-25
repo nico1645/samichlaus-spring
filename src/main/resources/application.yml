@@ -48,7 +48,7 @@ spring:
             on-profile: develop
     datasource:
         url: jdbc:h2:mem:testdb # Using H2 in-memory database
-        driverClassName: org.h2.Driver
+        driver-class-name: org.h2.Driver
         username: test
         password: test
         jpa:
@@ -58,8 +58,8 @@ spring:
             database: h2
             database-platform: org.hibernate.dialect.H2Dialect
     mail:
-        host: ${SMTP_HOST}
-        port: ${SMTP_PORT}
+        host: smtp
+        port: 587
         username: ${SMTP_USERNAME}
         password: ${SMTP_PASSWORD}
         protocol: smtp
