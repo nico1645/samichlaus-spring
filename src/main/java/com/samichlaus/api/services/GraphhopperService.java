@@ -58,15 +58,14 @@ public class GraphhopperService {
     return response.getBest().getTime();
   }
 
+  // Might be used as alternative to Time Matrix in the future
   public double[][] calculateDistanceMatrix(List<Customer> customers) {
     int n = customers.size() + 1;
 
     double[][] distanceMatrix = new double[n][n];
 
-    // Calculate distances for all pairs of locations
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
-        // Compute distance between locations i and j
         if (i == 0 && j == 0) {
           distanceMatrix[i][j] = 0;
         } else if (i == 0) {
@@ -104,10 +103,8 @@ public class GraphhopperService {
     int n = customers.size() + 1;
     long[][] distanceMatrix = new long[n][n];
 
-    // Calculate distances for all pairs of locations
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
-        // Compute distance between locations i and j
         if (i == 0 && j == 0) {
           distanceMatrix[i][j] = 0;
         } else if (i == 0) {

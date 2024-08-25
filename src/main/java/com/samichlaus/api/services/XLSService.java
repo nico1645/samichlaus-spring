@@ -21,17 +21,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class XLSService {
 
-  private final GraphhopperService graphhopperService;
-
   private final TourRepository tourRepository;
   private final YAMLConfig yamlConfig;
 
   public XLSService(
-      GraphhopperService graphhopperService,
       @Qualifier("config") YAMLConfig yamlConfig,
       TourRepository tourRepository) {
     this.tourRepository = tourRepository;
-    this.graphhopperService = graphhopperService;
     this.yamlConfig = yamlConfig;
   }
 

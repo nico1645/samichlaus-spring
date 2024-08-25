@@ -16,13 +16,13 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 @Contact(
                     name = "nba",
                     email = "nba@famba.me",
-                    url = "https://www.samichlaushergiswil.ch"),
+                    url = "${samichlaus.frontend-server}"),
             description = "OpenApi documentation for Spring Security",
             title = "OpenApi specification - nba",
-            version = "0.0.1"),
+            version = "0.2.0"),
     servers = {
       @Server(description = "Local ENV", url = "http://127.0.0.1:8080"),
-      @Server(description = "PROD ENV", url = "https://api.samichlaus.famba.me")
+      @Server(description = "PROD ENV", url = "${samichlaus.backend-server}")
     },
     security = {@SecurityRequirement(name = "bearerAuth")})
 @SecurityScheme(

@@ -35,3 +35,4 @@ build/
 .env*
 .DS_STORE
 memory:myDb*
+src/main/resources/templates/Laufliste.xlsm

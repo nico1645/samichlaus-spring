@@ -3,7 +3,13 @@ package com.samichlaus.api.config;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.Arrays;
+import java.util.List;
+
+import com.samichlaus.api.domain.tour.TourRepository;
+import com.samichlaus.api.services.GraphhopperService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -27,6 +33,8 @@ public class SecurityConfiguration {
   private final JwtAuthenticationFilter jwtAuthFilter;
   private final AuthenticationProvider authenticationProvider;
   private final LogoutHandler logoutHandler;
+  @Qualifier("config")
+  private final YAMLConfig yamlConfig;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,11 +43,11 @@ public class SecurityConfiguration {
               auth.requestMatchers(
                       "/api/v1/auth/**",
                       "/error",
-                      "/access-denied",
-                      "/v3/api-docs",
+                      "/v3/api-docs/**",
                       "/v3/api/docs/**",
                       "/swagger-ui.html",
-                      "/swagger-ui/**")
+                      "/swagger-ui/**"
+                      )
                   .permitAll();
               auth.anyRequest().authenticated();
             })
@@ -62,11 +70,9 @@ public class SecurityConfiguration {
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(
-        Arrays.asList(
-            "http://localhost",
-            "http://localhost:5173",
-            "http://localhost:8080",
-            "https://samichlaus.famba.me"));
+            List.of(
+                    yamlConfig.getFrontendServer()
+            ));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE"));
     configuration.setAllowedHeaders(
         Arrays.asList(
